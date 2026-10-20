@@ -1,0 +1,44 @@
+name: SmartSathi APK By Sanu Kumar
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build SmartSathi By Sanu Kumar
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Create Android Project
+        run: flutter create --platforms=android smart_sathi_build
+
+      - name: Copy App Files
+        run: |
+          cp -r lib smart_sathi_build/
+          cp pubspec.yaml smart_sathi_build/
+
+      - name: Build APK
+        working-directory: smart_sathi_build
+        run: |
+          flutter pub get
+          flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: SmartSathi-APK-By-Sanu-Kumar
+          path: smart_sathi_build/build/app/outputs/flutter-apk/app-release.apk
